@@ -4,36 +4,36 @@
 
 C# reverse-engineered wrapper for [Google Gemini](https://gemini.google.com/) web app.
 
-このプロジェクトは下記の Python プロジェクトの C# 版を作成することを目的としています
+This project aims to create a C# version of the Python project below:
 https://github.com/HanaokaYuzu/Gemini-API
 
-**ベースバージョン:**
+**Base Version:**
 - **Repository**: https://github.com/HanaokaYuzu/Gemini-API
 - **Commit**: `3f2b935420fd688e1ab84d937de2c33a871697c0`
 - **Date**: 2026-02-10
 - **Message**: Fix the retry logic for unsaved conversations. (#233)
 
-## 概要
+## Overview
 
-元の [Python Gemini API](https://github.com/HanaokaYuzu/Gemini-API) プロジェクトの C# ポートです。以下の機能をサポートする Google Gemini Web API 用の非同期第一の包装提供します：
+A C# port of the original [Python Gemini API](https://github.com/HanaokaYuzu/Gemini-API) project. Provides an async-first wrapper for the Google Gemini Web API with the following features:
 
-- **永続的クッキー** - クッキーの自動管理と更新
-- **画像生成** - 画像の生成と編集をサポート
-- **システムプロンプト** - Gems を使用したカスタマイズ可能なプロンプト
-- **拡張機能サポート** - Gemini 拡張機能との統合
-- **ストリーミングモード** - リアルタイムコンテンツ生成
-- **マルチターン会話** - 組み込みチャットセッション管理
-- **非同期** - .NET の async/await サポート完全装備
+- **Persistent Cookies** - Automatic cookie management and updates
+- **Image Generation** - Support for image generation and editing
+- **System Prompts** - Customizable prompts using Gems
+- **Extensions Support** - Integration with Gemini extensions
+- **Streaming Mode** - Real-time content generation
+- **Multi-turn Conversations** - Built-in chat session management
+- **Async** - Full .NET async/await support
 
-## 要件
+## Requirements
 
-- .NET 8.0 以上
-- C# 11 以上
-- Gemini へのアクセスがある有効な Google アカウント
+- .NET 8.0 or higher
+- C# 11 or higher
+- Valid Google account with Gemini access
 
-## インストール
+## Installation
 
-### ソースからビルド
+### Building from Source
 
 ```bash
 git clone <repository-url>
@@ -41,18 +41,18 @@ cd GeminiWebApiDotnet
 dotnet build
 ```
 
-## 認証
+## Authentication
 
-1. [https://gemini.google.com](https://gemini.google.com/) にアクセスしてログイン
-2. 開発者ツール (F12) を開き、Network タブに移動
-3. ページを更新
-4. リクエストをクリックし、以下のクッキー値をコピー：
+1. Access [https://gemini.google.com](https://gemini.google.com/) and log in
+2. Open Developer Tools (F12) and navigate to the Network tab
+3. Refresh the page
+4. Click on a request and copy the following cookie values:
    - `__Secure-1PSID`
-   - `__Secure-1PSIDTS` (オプション)
+   - `__Secure-1PSIDTS` (optional)
 
-## クイックスタート
+## Quick Start
 
-### 基本的な使用方法
+### Basic Usage
 
 ```csharp
 using GeminiWebApi;
@@ -73,7 +73,7 @@ Console.WriteLine(response.Text);
 await client.CloseAsync();
 ```
 
-### ストリーミング
+### Streaming
 
 ```csharp
 await foreach (var chunk in client.GenerateContentStreamAsync("Tell me a story"))
@@ -82,7 +82,7 @@ await foreach (var chunk in client.GenerateContentStreamAsync("Tell me a story")
 }
 ```
 
-### マルチターン会話
+### Multi-turn Conversation
 
 ```csharp
 var chat = client.StartChat();
@@ -94,7 +94,7 @@ var response2 = await chat.SendMessageAsync("Can you give me an example?");
 Console.WriteLine(response2.Text);
 ```
 
-### モデル選択
+### Model Selection
 
 ```csharp
 using GeminiWebApi.Constants;
@@ -105,40 +105,40 @@ var response = await client.GenerateContentAsync(
 );
 ```
 
-利用可能なモデル：
-- `ModelType.Unspecified` - デフォルトモデル
+Available Models:
+- `ModelType.Unspecified` - Default model
 - `ModelType.Gemini30Pro` - Gemini 3.0 Pro
 - `ModelType.Gemini30Flash` - Gemini 3.0 Flash  
 - `ModelType.Gemini30FlashThinking` - Gemini 3.0 Flash Thinking
 
-### Gems パネル (システムプロンプト)
+### Gems Panel (System Prompts)
 
 ```csharp
-// 利用可能な Gems を取得
+// Fetch available Gems
 var gems = await client.FetchGemsAsync(includeHidden: false);
 
-// 特定の Gem を検索
+// Search for a specific Gem
 var codingGem = gems.Get(name: "Coding Helper");
 
-// カスタム Gem を作成
+// Create a custom Gem
 var customGem = await client.CreateGemAsync(
     name: "Python Expert",
     prompt: "You are an expert Python developer",
     description: "Helps with Python programming"
 );
 
-// 会話で Gem を使用
+// Use Gem in conversation
 var chat = client.StartChat(gem: customGem.Id);
 var response = await chat.SendMessageAsync("How do I use decorators?");
 ```
 
-### 画像処理
+### Image Processing
 
 ```csharp
-// 画像を生成
+// Generate an image
 var response = await client.GenerateContentAsync("Generate an image of a sunset");
 
-// レスポンス内の画像にアクセス
+// Access images in the response
 foreach (var image in response.Images)
 {
     Console.WriteLine($"Image: {image.Title}");
@@ -146,7 +146,7 @@ foreach (var image in response.Images)
 }
 ```
 
-## エラーハンドリング
+## Error Handling
 
 ```csharp
 using GeminiWebApi.Exceptions;
@@ -157,85 +157,89 @@ try
 }
 catch (AuthenticationException ex)
 {
-    Console.WriteLine($"認証失敗: {ex.Message}");
+    Console.WriteLine($"Authentication failed: {ex.Message}");
 }
 catch (ModelInvalidException ex)
 {
-    Console.WriteLine($"無効なモデル: {ex.Message}");
+    Console.WriteLine($"Invalid model: {ex.Message}");
 }
 catch (GeminiException ex)
 {
-    Console.WriteLine($"エラー: {ex.Message}");
+    Console.WriteLine($"Error: {ex.Message}");
 }
 ```
 
-## ロギング
+## Logging
 
-ロギング出力を制御：
+Control logging output:
 
 ```csharp
 using GeminiWebApi.Utils;
 
-Logger.SetLogLevel(Logger.LogLevel.Debug);      // 詳細ログ
-Logger.SetLogLevel(Logger.LogLevel.Info);       // 情報レベル
-Logger.SetLogLevel(Logger.LogLevel.Warning);    // 警告のみ
-Logger.SetLogLevel(Logger.LogLevel.Error);      // エラーのみ
+Logger.SetLogLevel(Logger.LogLevel.Debug);      // Verbose logging
+Logger.SetLogLevel(Logger.LogLevel.Info);       // Info level
+Logger.SetLogLevel(Logger.LogLevel.Warning);    // Warnings only
+Logger.SetLogLevel(Logger.LogLevel.Error);      // Errors only
 ```
 
-## API リファレンス
+## API Reference
 
 ### GeminiClient
 
-Gemini API と相互作用するためのメインクラス。
+The main class for interacting with the Gemini API.
 
-**メソッド:**
-- `InitializeAsync()` - クライアントを初期化
-- `GenerateContentAsync()` - プロンプトからコンテンツを生成
-- `GenerateContentStreamAsync()` - ストリーミングでコンテンツ生成
-- `StartChat()` - 新しいチャットセッションを作成
-- `FetchGemsAsync()` - 利用可能な Gems を取得
-- `CreateGemAsync()` - カスタム Gem を作成
-- `CloseAsync()` - クライアントを閉じてクリーンアップ
+**Methods:**
+- `InitializeAsync()` - Initialize the client
+- `GenerateContentAsync()` - Generate content from a prompt
+- `GenerateContentStreamAsync()` - Generate content with streaming
+- `StartChat()` - Create a new chat session
+- `FetchGemsAsync()` - Retrieve available Gems
+- `CreateGemAsync()` - Create a custom Gem
+- `CloseAsync()` - Close and clean up the client
 
 ### ChatSession
 
-会話セッションを表します。
+Represents a conversation session.
 
-**メソッド:**
-- `SendMessageAsync()` - チャットでメッセージを送信
-- `SendMessageStreamAsync()` - ストリーミングでメッセージを送信
-- `ChooseCandidate()` - 特定のレスポンス候補を選択
+**Methods:**
+- `SendMessageAsync()` - Send a message in the chat
+- `SendMessageStreamAsync()` - Send a message with streaming
+- `ChooseCandidate()` - Select a specific response candidate
 
 ### ModelOutput
 
-コンテンツ生成の結果。
+The result of content generation.
 
-**プロパティ:**
-- `Text` - 生成されたテキスト全体
-- `TextDelta` - 最後のチャンク以降の新しいテキスト（ストリーミング用）
-- `Thoughts` - モデルの思考プロセス（利用可能な場合）
-- `Images` - レスポンス内の画像リスト
+**Properties:**
+- `Text` - The complete generated text
+- `TextDelta` - New text since the last chunk (for streaming)
+- `Thoughts` - Model's thinking process (when available)
+- `Images` - List of images in the response
 
-## プロジェクト構造
+## Project Structure
 
 ```
 GeminiWebApiDotnet/
 ├── src/GeminiWebApi/
-│   ├── Constants/          # API 定数とエンドポイント
-│   ├── Exceptions/         # カスタム例外
-│   ├── Models/             # データモデル
-│   ├── Utils/              # ユーティリティ関数
-│   └── GeminiClient.cs     # メインクライアントクラス
-├── example/                 # サンプル使用法
-├── tests/                   # ユニットテスト
-├── GeminiWebApi.csproj     # プロジェクトファイル
+│   ├── Constants/          # API constants and endpoints
+│   ├── Exceptions/         # Custom exceptions
+│   ├── Models/             # Data models
+│   ├── Utils/              # Utility functions
+│   └── GeminiClient.cs     # Main client class
+├── example/                 # Sample usage
+├── tests/                   # Unit tests
+├── GeminiWebApi.csproj     # Project file
 └── ReadMe.md
 ```
 
-## ライセンス
+## License
 
-AGPL-3.0 ライセンス - 詳細は LICENSE ファイルを参照
+AGPL-3.0 License - See the LICENSE file for details
 
-## 注記
+## Note
 
-このプロジェクトは逆流エンジニアリングの実装であり、Google とは提携していません。ご自身のリスクと Google の利用規約に準拠してご使用ください。
+This project is a reverse-engineered implementation and is not affiliated with Google. Use at your own risk and in compliance with Google's Terms of Service.
+
+## See Also
+
+For Japanese documentation, see [ReadMe.ja.md](ReadMe.ja.md)
