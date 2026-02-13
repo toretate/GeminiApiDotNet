@@ -1,4 +1,4 @@
-# GeminiWebApi - C# Gemini API Wrapper
+# Gemini Api - C# Gemini API Wrapper
 
 <img src="https://raw.githubusercontent.com/HanaokaYuzu/Gemini-API/master/assets/logo.svg" width="35px" alt="Gemini Icon" /> 
 
