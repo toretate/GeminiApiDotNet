@@ -39,15 +39,25 @@ A C# port of the original [Python Gemini API](https://github.com/HanaokaYuzu/Gem
 - C# 11 or higher
 - Valid Google account with Gemini access
 
+## Dependencies
+
+This library depends on the following NuGet packages:
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| System.Net.Http | 4.3.4 | HTTP communication |
+| System.Text.Json | 8.0.0 | JSON serialization/deserialization |
+| HttpClientFactory | 1.0.0 | HTTP client factory pattern |
+
+> **Note:** When using the NuGet package, these dependencies are automatically resolved. If you manually reference the DLL files, you'll need to install these dependencies separately in your project.
+
 ## Installation
 
-### Building from Source
+For detailed installation instructions, see [INSTALLATION.md](INSTALLATION.md).
 
-```bash
-git clone <repository-url>
-cd GeminiWebApiDotnet
-dotnet build
-```
+Quick summary:
+- **Build from source:** `git clone` and `dotnet build`
+- **Download from Release (Recommended):** Use local NuGet feed or GitHub Packages
 
 ## Authentication
 

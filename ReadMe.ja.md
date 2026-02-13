@@ -39,15 +39,25 @@ https://github.com/HanaokaYuzu/Gemini-API
 - C# 11 以上
 - Gemini へのアクセスがある有効な Google アカウント
 
+## 依存関係
+
+このライブラリは以下の NuGet パッケージに依存しています：
+
+| パッケージ | バージョン | 目的 |
+|-----------|---------|----------|
+| System.Net.Http | 4.3.4 | HTTP 通信 |
+| System.Text.Json | 8.0.0 | JSON シリアライズ / デシリアライズ |
+| HttpClientFactory | 1.0.0 | HTTP クライアントファクトリパターン |
+
+> **注意：** NuGet パッケージを使用する場合、これらの依存関係は自動的に解決されます。DLL ファイルを手動で参照する場合は、プロジェクトでこれらの依存関係を個別にインストールする必要があります。
+
 ## インストール
 
-### ソースからビルド
+詳細なインストール手順は [INSTALLATION.ja.md](INSTALLATION.ja.md) を参照してください。
 
-```bash
-git clone <repository-url>
-cd GeminiWebApiDotnet
-dotnet build
-```
+簡単に言えば：
+- **ソースからビルド：** `git clone` して `dotnet build`
+- **Release からダウンロード（推奨）：** ローカル NuGet フィードまたは GitHub Packages を使用
 
 ## 認証
 
