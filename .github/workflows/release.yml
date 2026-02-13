@@ -5,69 +5,94 @@ on:
     tags:
       - 'v*'
 
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'src/GeminiWebApi/GeminiWebApi.csproj'
+  TESTS_PATH: 'tests/GeminiWebApi.Tests.csproj'
+
 jobs:
-  build:
+  build-and-release:
     runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Restore dependencies
-      run: dotnet restore "src\GeminiWebApi\GeminiWebApi.csproj"
+      run: dotnet restore ${{ env.PROJECT_PATH }}
     
     - name: Build Release
-      run: dotnet build "src\GeminiWebApi\GeminiWebApi.csproj" -c Release --no-restore
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+    
+    - name: Run tests
+      run: dotnet test ${{ env.TESTS_PATH }} -c Release --no-build --logger "console;verbosity=normal"
+      continue-on-error: true
     
     - name: Create NuGet package
-      run: dotnet pack "src\GeminiWebApi\GeminiWebApi.csproj" -c Release -o ./nupkg
+      run: dotnet pack ${{ env.PROJECT_PATH }} -c Release -o ./nupkg --no-build
     
-    - name: Get version from tag
-      id: tag_name
+    - name: Extract version from tag
+      id: version
+      shell: pwsh
       run: |
-        $version = "${{ github.ref }}".Replace("refs/tags/v", "")
+        $tag = "${{ github.ref }}".Replace("refs/tags/", "")
+        $version = $tag.Replace("v", "")
+        echo "TAG=$tag" >> $env:GITHUB_OUTPUT
         echo "VERSION=$version" >> $env:GITHUB_OUTPUT
     
-    - name: Create Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Prepare release assets
+      shell: pwsh
+      run: |
+        $outputDir = "release_assets"
+        New-Item -ItemType Directory -Path $outputDir -Force
+        
+        # Copy DLL
+        Copy-Item `
+          "src/GeminiWebApi/bin/Release/net8.0/GeminiWebApi.dll" `
+          "$outputDir/GeminiWebApi-${{ steps.version.outputs.VERSION }}.dll"
+        
+        # Copy PDB
+        Copy-Item `
+          "src/GeminiWebApi/bin/Release/net8.0/GeminiWebApi.pdb" `
+          "$outputDir/GeminiWebApi-${{ steps.version.outputs.VERSION }}.pdb"
+        
+        # Copy deps.json
+        Copy-Item `
+          "src/GeminiWebApi/bin/Release/net8.0/GeminiWebApi.deps.json" `
+          "$outputDir/GeminiWebApi.deps.json"
+        
+        # Find and copy nupkg
+        $nupkg = Get-ChildItem nupkg -Filter "*.nupkg" | Select-Object -First 1
+        if ($nupkg) {
+          Copy-Item $nupkg.FullName "$outputDir/GeminiWebApi-${{ steps.version.outputs.VERSION }}.nupkg"
+        }
+        
+        ls -Recurse $outputDir
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.tag_name.outputs.VERSION }}
+        tag_name: ${{ steps.version.outputs.TAG }}
+        name: Release ${{ steps.version.outputs.VERSION }}
         draft: false
         prerelease: false
-    
-    - name: Upload DLL to Release
-      uses: actions/upload-release-asset@v1
+        files: release_assets/*
+        generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/GeminiWebApi/bin/Release/net8.0/GeminiWebApi.dll
-        asset_name: GeminiWebApi-${{ steps.tag_name.outputs.VERSION }}.dll
-        asset_content_type: application/octet-stream
     
-    - name: Upload PDB to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/GeminiWebApi/bin/Release/net8.0/GeminiWebApi.pdb
-        asset_name: GeminiWebApi-${{ steps.tag_name.outputs.VERSION }}.pdb
-        asset_content_type: application/octet-stream
-    
-    - name: Upload NuGet package to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./nupkg/GeminiWebApi.*.nupkg
-        asset_name: GeminiWebApi-${{ steps.tag_name.outputs.VERSION }}.nupkg
-        asset_content_type: application/octet-stream
+    - name: Display release info
+      run: |
+        echo "✅ Release created successfully!"
+        echo "Release Name: Release ${{ steps.version.outputs.VERSION }}"
+        echo "Tag: ${{ steps.version.outputs.TAG }}"
+        echo "DLL: GeminiWebApi-${{ steps.version.outputs.VERSION }}.dll"
+        echo "PDB: GeminiWebApi-${{ steps.version.outputs.VERSION }}.pdb"
+        echo "NuGet: GeminiWebApi-${{ steps.version.outputs.VERSION }}.nupkg"
