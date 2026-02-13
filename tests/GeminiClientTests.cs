@@ -1,4 +1,6 @@
+using System;
 using Xunit;
+using GeminiWebApi;
 using GeminiWebApi.Constants;
 using GeminiWebApi.Exceptions;
 using GeminiWebApi.Models;

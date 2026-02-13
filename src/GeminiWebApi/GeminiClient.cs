@@ -75,6 +75,10 @@ public class GeminiClient : IAsyncDisposable
 
         foreach (var header in RequestHeaders.GeminiHeaders)
         {
+            // Skip Content-Type as it should be set per request
+            if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                continue;
+                
             _httpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
         }
 
