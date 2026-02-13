@@ -7,6 +7,12 @@ C# reverse-engineered wrapper for [Google Gemini](https://gemini.google.com/) we
 このプロジェクトは下記の Python プロジェクトの C# 版を作成することを目的としています
 https://github.com/HanaokaYuzu/Gemini-API
 
+**ベースバージョン:**
+- **Repository**: https://github.com/HanaokaYuzu/Gemini-API
+- **Commit**: `3f2b935420fd688e1ab84d937de2c33a871697c0`
+- **Date**: 2026-02-10
+- **Message**: Fix the retry logic for unsaved conversations. (#233)
+
 ## 概要
 
 元の [Python Gemini API](https://github.com/HanaokaYuzu/Gemini-API) プロジェクトの C# ポートです。以下の機能をサポートする Google Gemini Web API 用の非同期第一の包装提供します：
