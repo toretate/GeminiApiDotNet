@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>GeminiWebApi</PackageId>
+    <Title>Gemini Web API</Title>
+    <Version>1.0.0</Version>
+    <Authors>Translated from Python</Authors>
+    <Description>C# wrapper for Google Gemini web app reverse-engineered API</Description>
+    <RepositoryUrl>https://github.com/HanaokaYuzu/Gemini-API</RepositoryUrl>
+    <License>AGPL-3.0-only</License>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+    <PackageReference Include="HttpClientFactory" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
