@@ -2,6 +2,14 @@
 
 <img src="https://raw.githubusercontent.com/HanaokaYuzu/Gemini-API/master/assets/logo.svg" width="35px" alt="Gemini Icon" /> 
 
+<div align="center">
+
+### Language / 言語
+
+[🇯🇵 日本語](ReadMe.ja.md) | [🇬🇧 English](ReadMe.md) | [🌐 Google Translate](https://translate.google.com/translate?sl=ja&tl=en&u=https://github.com/toretate/GeminiApiDotNet/blob/main/ReadMe.ja.md)
+
+</div>
+
 Google Gemini Web アプリ用の C# リバースエンジニアリングラッパー。
 
 このプロジェクトは下記の Python プロジェクトの C# 版を作成することを目的としています
